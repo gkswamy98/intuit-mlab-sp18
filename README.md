@@ -22,7 +22,9 @@ Data Schema:
   
   'upvotes': num_upvotes,
   
-  'comments': 'text of all comments'
+  'date': 'date string',
+  
+  'comments': 'text of all comments',
 }
 
 ...]
