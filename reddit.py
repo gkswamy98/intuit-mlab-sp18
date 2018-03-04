@@ -11,11 +11,13 @@ subreddit = reddit.subreddit('personalfinance')
 file_name = 'personalfinance.json'
 open(file_name, 'w').close()
 
+file = open(file_name,'w')
+
 count = 0
 list_dicts = []
 
-for year in range(2016, 2017):
-	for month in range(1,13):
+for year in range(2017, 2018):
+	for month in range(1,2):
 
 		startDate = datetime.date(year, month, 1)
 		endDate = datetime.date(year, (month + 1) % 12, 1)
@@ -40,8 +42,11 @@ for year in range(2016, 2017):
 						'date': startUnix,
 						'comments': comment_bodies}
 			list_dicts.append(sub_dict)
-			count += 1
 
-file = open(file_name,'w')
-file.write(json.dumps(list_dicts))
+			count += 1
+			print count
+
+
+			file.write(json.dumps(sub_dict))
+
 file.close()
