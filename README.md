@@ -8,3 +8,21 @@ Personal Finance Subreddit: https://www.reddit.com/r/personalfinance/
 Reddit Scraper: https://praw.readthedocs.io/en/latest/
 
 NLP Intro: https://ocf.io/gkswamy/Intro_NLP_Intuit.pdf
+
+Data Schema:
+
+[ ...
+
+{
+  'title': 'title text',
+  
+  'body': 'body text',
+  
+  'flair': 'flair text',
+  
+  'upvotes': num_upvotes,
+  
+  'comments': 'text of all comments'
+}
+
+...]
