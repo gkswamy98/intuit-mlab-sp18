@@ -6,12 +6,13 @@ reddit = praw.Reddit(client_id='tJPMCPv9rwNJrA',
 					 client_secret='5rcOdSXgSSBfV6iAOaz3PhPN4Lo',
 					 user_agent='proseccodaddy')
 
-subreddit = reddit.subreddit('personalfinance')re
+subreddit = reddit.subreddit('personalfinance')
 
 file_name = 'personalfinance.json'
 open(file_name, 'w').close()
 
 file = open(file_name,'w')
+file.write('[')
 
 count = 0
 list_dicts = []
@@ -48,5 +49,7 @@ for year in range(2017, 2018):
 
 
 			file.write(json.dumps(sub_dict))
+			file.write(', ')
 
+file.write(']')
 file.close()
