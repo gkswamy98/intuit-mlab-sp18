@@ -6,7 +6,7 @@ reddit = praw.Reddit(client_id='tJPMCPv9rwNJrA',
 					 client_secret='5rcOdSXgSSBfV6iAOaz3PhPN4Lo',
 					 user_agent='proseccodaddy')
 
-subreddit = reddit.subreddit('personalfinance')
+subreddit = reddit.subreddit('personalfinance')re
 
 file_name = 'personalfinance.json'
 open(file_name, 'w').close()
