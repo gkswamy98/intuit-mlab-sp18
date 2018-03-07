@@ -18,7 +18,7 @@ count = 0
 list_dicts = []
 
 for year in range(2017, 2018):
-	for month in range(1,2):
+	for month in range(1,12):
 
 		startDate = datetime.date(year, month, 1)
 		endDate = datetime.date(year, (month + 1) % 12, 1)
