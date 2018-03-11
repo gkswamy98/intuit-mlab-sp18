@@ -10,11 +10,11 @@ def extract_keywords(filepath):
    		for i in range(len(json_data)):
    			text += (json_data[i]['title'] + json_data[i]['body']).lower()
    		r = Rake()
-   		r.extract_keywords_from_text()
+   		r.extract_keywords_from_text(text)
    		return r.get_ranked_phrases()
 
 def main():
-	print(extract_keywords('./personal_finance_2017.json'))
+	print(extract_keywords('./personal_finance_2013.json')[:20])
 
 
 if __name__ == '__main__':
