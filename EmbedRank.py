@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 from sklearn.metrics.pairwise import rbf_kernel
+from sklearn.metrics.pairwise import cosine_similarity
 
 class EmbedRank:
     
@@ -20,16 +21,30 @@ class EmbedRank:
             for i, txt in enumerate(self.words):
                 ax.annotate(txt, (self.X[i,0],self.X[i,1]), xytext = (self.X[i,0]+0.15,self.X[i,1]-0.15))
             plt.show()
+
+    def load_similarity_matrix(self, type = 'cosine', gamma_scale = None):
+        if type == 'cosine':
+            self.S = cosine_similarity(self.X)
+        elif type == 'rbf':
+            self.S = rbf_kernel(self.X, gamma = gamma_scale*(1/len(self.X)))
+        self.S_below = np.zeros_like(self.S) # initialize threshold mask
+
+    def threshold(self, thres = 0.2):
+        self.S_below = self.S < thres
+        self.S[self.S_below] = 0
     
-    def load_similarity_matrix(self, gamma_scale):
-        self.S = rbf_kernel(self.X, gamma = gamma_scale*(1/len(self.X)))
-    
-    def load_transition_matrix(self, tau):
+    def load_transition_matrix(self, scale = 'softmax', tau = None):
         # TODO: Add zero threshold
-        row_sums_ex_diag = np.exp(self.S / tau).sum(axis = 1)[:, np.newaxis] - np.exp(1 / tau)
-        self.T = np.exp(self.S / tau) / row_sums_ex_diag
-        diag_idx = np.diag_indices(len(self.S))
-        self.T[diag_idx] = 0
+        below = self.S_below.sum(axis = 1)[:, np.newaxis]
+        if scale == 'softmax':
+            row_sums = np.exp(self.S / tau).sum(axis = 1)[:, np.newaxis]
+            row_sums_adj = row_sums - (below + np.exp(1/ tau)) # Adjust for thresholds and diagonals
+            self.T = np.exp(self.S / tau) / row_sums_adj
+        elif scale == 'linear':
+            row_sums_adj = self.S.sum(axis = 1)[:, np.newaxis] - 1
+            self.T = self.S / row_sums_adj
+        to_keep = 1 - (np.eye(len(self.S)) + self.S_below)
+        self.T *= to_keep
     
     def load_word_probs(self):
         G = nx.from_numpy_matrix(self.T)
@@ -49,15 +64,15 @@ class EmbedRank:
                 ax.annotate(txt, (self.X[i,0],self.X[i,1]), xytext = (self.X[i,0]+0.15,self.X[i,1]-0.15))
             plt.show()
 
-def main():
-    er = EmbedRank()
-    er.generate_2D_example(15)
-    er.plot2D()
-    er.load_similarity_matrix(gamma_scale = 0.5)
-    er.load_transition_matrix(tau = 0.2)
-    er.load_word_probs()
-    er.load_ranks()
-    er.plot_2D_with_ranks()
+er = EmbedRank()
+er.generate_2D_example(15)
+er.plot2D()
+er.load_similarity_matrix('rbf', gamma_scale = 0.5)
+er.threshold(0.2)
+er.load_transition_matrix(scale = 'linear')
+er.load_word_probs()
+er.load_ranks()
+er.plot_2D_with_ranks()
 
 if __name__ == '__main__':
     main()
