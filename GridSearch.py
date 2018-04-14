@@ -1,5 +1,6 @@
 from EmbedRank import EmbedRank
 import numpy as np
+import pandas as pd
 from numpy.random import choice
 
 class GridSearch:
@@ -8,7 +9,7 @@ class GridSearch:
         self.grid = {
             'similarity': ['cosine', 'rbf'],
             'gamma': np.linspace(0,1,21),
-            'threshold': np.linspace(0,0.5, 11),
+            'threshold': np.linspace(0,0.25, 6),
             'scale': ['linear', 'softmax'],
             'tau': np.linspace(0.1, 1, 19),
             'alpha': np.linspace(0.75,1,6)
@@ -52,29 +53,23 @@ class GridSearch:
         return top_n_words
 
     def random_grid_search(self, n_words = 100, n_iter = 50):
-        results = []
+        df_idx = list(self.grid.keys()) + list(range(n_words))
+        df_cols = list(range(n_iter))
+        results = pd.DataFrame(index = df_idx, columns = df_cols)
         for i in range(n_iter):
-            print('Selection {}'.format(i).ljust(30,'.'), end = '')
+            print('Hyperparam selection {}'.format(i).ljust(30,'.'), end = '')
             params = self.random_selection()
             print('Done.')
             top_n_words = self.top_n_words(n_words, **params)
-            params['top_n_words'] = top_n_words
-            results.append(params)
+            results[i] = list(params.values()) + list(top_n_words)
         return results
 
 
-'''
-er = EmbedRank()
-er.load_json('embeddings-freq.json')
-#er.generate_2D_example(15)
-#er.plot2D()
-er.load_similarity_matrix('cosine')
-er.threshold(0.2)
-er.load_transition_matrix(scale = 'linear')
-#er.load_word_probs()
-#er.load_ranks()
-#er.plot_2D_with_ranks()
 
-#if __name__ == '__main__':
-#    main()
+
+'''
+gs = GridSearch()
+gs.load_json('embeddings-freq.json') # or whatever the embedding json is
+results = gs.random_grid_search(n_words = 100, n_iter = 10)
+
 '''

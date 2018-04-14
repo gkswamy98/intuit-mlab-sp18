@@ -63,7 +63,7 @@ class EmbedRank:
         self.T *= to_keep
         print('Done.')
 
-    def pagerank(self, alpha, max_iter = 50, eps = 10e-6):
+    def pagerank(self, alpha, max_iter = 50, eps = 10e-9):
         '''Where T is row stochastic (i.e. (i,j) 
         represents edge probability from i to j)'''
         n = self.T.shape[0]
@@ -71,8 +71,8 @@ class EmbedRank:
         v_prev = np.zeros((n,))
         v = np.ones((n,)) / n
         i = 0
-        while (np.linalg.norm(v-v_prev) > eps) and (i < max_iter):
-            print('Iteration {}'.format(i).ljust(30,'.'), end = '')
+        while (np.linalg.norm(v-v_prev, 1) > eps) and (i < max_iter):
+            print('Power iteration {}'.format(i).ljust(30,'.'), end = '')
             v_prev = v
             v = v @ G
             i += 1
